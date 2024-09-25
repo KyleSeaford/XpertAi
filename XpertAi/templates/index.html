@@ -60,11 +60,13 @@
         const loadingIcon = document.getElementById('loading');
 
         // Display user message
+        // Display user message with line breaks preserved
         messagesDiv.innerHTML += `
             <div class="message user-message">
-                <div class="message-text"><strong>You:</strong> ${userInput}</div>
+                <div class="message-text"><strong>You:</strong> ${userInput.replace(/\n/g, '<br>')}</div>
                 <img src="{% static 'user.png' %}" alt="User" class="user-icon">
             </div>`;
+
         textarea.value = '';
         autoResizeTextarea.call(textarea);
 
