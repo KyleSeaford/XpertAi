@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid h-100 w-100" style="padding-right: 0; padding-left: 0;">
+    <div class="row h-100" style="margin-right: 0; margin-left: 0;">
+        <div class="col-12 d-flex flex-column" style="padding-right: 0; padding-left: 0;">
+            <div class="chat-area flex-grow-1 overflow-auto">
+                <div id="messages"></div>
+                <!-- <img id="loading" src="https://static.thenounproject.com/png/409143-200.png" alt="Loading..." class="loading-icon hidden" />  -->
+                <img id="loading" src="{% static 'logoClear.png' %}" alt="Loading..." class="loading-icon hidden" />
+            </div>
+            <div class="input-area">
+                <form id="chat-form" class="input-group">
+                    <textarea id="user-input" class="form-control" rows="1" placeholder="Type your message..." required></textarea>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" style="background-color: #34495e; border-color: #34495e;" type="submit">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to auto-resize the textarea
+    function autoResizeTextarea() {
+        this.style.height = 'auto'; // Reset the height to auto to calculate the new height
+        this.style.height = (this.scrollHeight) + 'px'; // Set the height to the scrollHeight
+    }
+
+    // Get the textarea element
+    const textarea = document.getElementById('user-input');
+    const form = document.getElementById('chat-form');
+
+    // Add event listener for input event to auto-resize
+    textarea.addEventListener('input', autoResizeTextarea);
+
+    // Handle keydown event for Enter and Shift + Enter
+    textarea.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            if (!event.shiftKey) {
+                event.preventDefault();
+                handleFormSubmit();
+            }
+        }
+    });
+
+    function handleFormSubmit() {
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+
+    let conversationId = "";
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const userInput = textarea.value;
+        const messagesDiv = document.getElementById('messages');
+        const loadingIcon = document.getElementById('loading');
+
+        // Display user message
+        messagesDiv.innerHTML += `
+            <div class="message user-message">
+                <div class="message-text"><strong>You:</strong> ${userInput}</div>
+                <img src="{% static 'user.png' %}" alt="User" class="user-icon">
+            </div>`;
+        textarea.value = '';
+        autoResizeTextarea.call(textarea);
+
+        // Show loading icon
+        loadingIcon.classList.remove('hidden');
+
+        try {
+            const response = await fetch('https://api.dify.ai/v1/chat-messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer app-gzhiHdlUkZPE8MRup5mlXlea'
+                },
+                body: JSON.stringify({
+                    inputs: {},
+                    query: userInput,
+                    response_mode: "blocking",
+                    conversation_id: conversationId,
+                    user: "XpertAI_Devs",
+                    files: []
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error: ${errorText}`);
+            }
+
+            const jsonResponse = await response.json();
+            conversationId = jsonResponse.conversation_id;
+            const answer = jsonResponse.answer;
+
+            if (!answer) {
+                throw new Error('No answer received from the API.');
+            }
+
+            loadingIcon.classList.add('hidden');
+            createNewResponseBubble(messagesDiv, answer);
+        } catch (error) {
+            console.error('Error:', error);
+            loadingIcon.classList.add('hidden');
+            messagesDiv.innerHTML += `
+                <div class="message ai-message">
+                    <img src="{% static 'Logo.png' %}" alt="AI" class="ai-icon">
+                    <div class="message-text"><strong>XpertAI:</strong> Sorry, there was an error processing your request. ${error.message}</div>
+                </div>`;
+        }
+    });
+
+    function createNewResponseBubble(messagesDiv, text) {
+        let messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', 'ai-message');
+        const uniqueId = `ai-response-text-${Date.now()}`;
+        messageDiv.innerHTML = `
+            <img src="{% static 'LogoClear.png' %}" alt="AI" class="ai-icon">
+            <div class="message-text"><strong>XpertAI:</strong> <span id="${uniqueId}"></span>`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.innerHTML += `
+        <div class="feedback-buttons" style="margin-top: 0; display: flex;/* position: absolute; *//* text-align: center; */margin-left: 51px;/* background-color: white; *//* margin-bottom: 15px; *//* break-before: column; *//* display: flex; *//* flex-wrap: wrap; *//* flex-direction: column; */">
+                <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('Good')" style="margin-right: 5px;">Good</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('Bad')">Bad</button>
+            </div>
+            `;
+        streamResponse(text, document.getElementById(uniqueId), messageDiv.querySelector('.feedback-buttons'));
+    }
+
+    function streamResponse(text, aiResponseTextElement, feedbackButtons) {
+        let index = 0;
+
+        function showNextCharacter() {
+            if (index < text.length) {
+                aiResponseTextElement.textContent += text.charAt(index);
+                index++;
+                setTimeout(showNextCharacter, 0.5);
+            } else {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                if(feedbackButtons != null) {
+                    feedbackButtons.style.display = 'flex'; // Show the feedback buttons after streaming finishes
+                }
+            }
+        }
+
+        showNextCharacter();
+    }
+
+    // Feedback handling function
+    function handleFeedback(feedbackType) {
+        console.log(`Feedback clicked: ${feedbackType}`);
+    }
+
+</script>
+{% endblock %}
