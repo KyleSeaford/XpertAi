@@ -125,7 +125,7 @@
             <div class="message-text"><strong>XpertAI:</strong> <span id="${uniqueId}"></span>`;
         messagesDiv.appendChild(messageDiv);
         messagesDiv.innerHTML += `
-        <div class="feedback-buttons" style="margin-top: 0; display: flex;/* position: absolute; *//* text-align: center; */margin-left: 51px;/* background-color: white; *//* margin-bottom: 15px; *//* break-before: column; *//* display: flex; *//* flex-wrap: wrap; *//* flex-direction: column; */">
+            <div class="feedback-buttons" style="margin-top: 0; display: flex; margin-left: 51px;">
                 <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('Good')" style="margin-right: 5px;">Good</button>
                 <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('Bad')">Bad</button>
             </div>
@@ -157,6 +157,5 @@
     function handleFeedback(feedbackType) {
         console.log(`Feedback clicked: ${feedbackType}`);
     }
-
 </script>
 {% endblock %}
