@@ -32,3 +32,4 @@ venv/
 */migrations/*
 db.sqlite3
 XpertAi/__pycache__/views.cpython-312.pyc
+db.sqlite3
