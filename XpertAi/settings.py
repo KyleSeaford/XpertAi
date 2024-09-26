@@ -36,11 +36,29 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+import os
+
+# Define the URL to access static files
 STATIC_URL = '/static/'
+
+# Define the directory to collect static files in production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Optional: Additional static directories
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
 ]
+
+MIDDLEWARE = [
+    # Add WhiteNoise middleware right after the SecurityMiddleware
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # other middleware...
+]
+
+# Enable gzip compression for static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Application definition
 
