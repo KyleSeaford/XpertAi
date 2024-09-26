@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout
 
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from XpertAi.forms import LoginForm, SignupForm
 
 def home(request):
@@ -51,3 +55,30 @@ def signup(request):
     return render(request, 'signup.html')
 
 
+@csrf_exempt
+def chat_api(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message')
+        conversation_id = request.POST.get('conversation_id', '')
+
+        # Make the API request to the external service (e.g., Dify API)
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer app-gzhiHdlUkZPE8MRup5mlXlea',  # Your API key (keep this secret!)
+        }
+        data = {
+            "inputs": {},
+            "query": user_message,
+            "response_mode": "blocking",
+            "conversation_id": conversation_id,
+            "user": "XpertAI_Devs",
+            "files": []
+        }
+
+        try:
+            response = requests.post('https://api.dify.ai/v1/chat-messages', headers=headers, json=data)
+            response.raise_for_status()  # Raise an error for bad responses
+            response_data = response.json()
+            return JsonResponse(response_data, status=200)
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
