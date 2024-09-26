@@ -7,10 +7,16 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import logout
 
 import requests
+import os
+from dotenv import load_dotenv
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from XpertAi.forms import LoginForm, SignupForm
+
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 
 def home(request):
     if not request.user.is_authenticated:
@@ -64,7 +70,7 @@ def chat_api(request):
         # Make the API request to the external service (e.g., Dify API)
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer app-gzhiHdlUkZPE8MRup5mlXlea',  # Your API key (keep this secret!)
+            'Authorization': API_KEY,  # Your API key (keep this secret!)
         }
         data = {
             "inputs": {},
