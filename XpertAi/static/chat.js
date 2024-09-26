@@ -37,7 +37,7 @@ form.addEventListener('submit', async function(event) {
     messagesDiv.innerHTML += `
         <div class="message user-message">
             <div class="message-text"><strong>You:</strong> ${userInput.replace(/\n/g, '<br>')}</div>
-            <img src="{% static 'user.png' %}" alt="User" class="user-icon">
+            <img src="/static/user.png" alt="User" class="user-icon">
         </div>`;
 
     textarea.value = '';
@@ -83,7 +83,7 @@ form.addEventListener('submit', async function(event) {
         loadingIcon.classList.add('hidden');
         messagesDiv.innerHTML += `
             <div class="message ai-message">
-                <img src="{% static 'LogoClear.png' %}" alt="AI" class="ai-icon">
+                <img src="/static/LogoClear.png" alt="AI" class="ai-icon">
                 <div class="message-text"><strong>XpertAI:</strong> Sorry, there was an error processing your request. ${error.message}</div>
             </div>`;
     }
@@ -95,7 +95,7 @@ function createNewResponseBubble(messagesDiv, text) {
     messageDiv.classList.add('message', 'ai-message');
     const uniqueId = `ai-response-text-${Date.now()}`;
     messageDiv.innerHTML = `
-        <img src="{% static 'LogoClear.png' %}" alt="AI" class="ai-icon">
+        <img src="/static/LogoClear.png" alt="AI" class="ai-icon">
         <div class="message-text"><strong>XpertAI:</strong> <span id="${uniqueId}"></span>`;
     messagesDiv.appendChild(messageDiv);
     messagesDiv.innerHTML += `
