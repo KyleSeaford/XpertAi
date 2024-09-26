@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import requests
 import os
@@ -65,10 +66,12 @@ def signup(request):
 
 
 @csrf_exempt
+@login_required  # Ensure the user is logged in
 def chat_api(request):
     if request.method == 'POST':
         user_message = request.POST.get('message')
         conversation_id = request.POST.get('conversation_id', '')
+        user = request.user  # Get the logged-in user
 
         # Validate user input
         if not user_message:
@@ -84,7 +87,7 @@ def chat_api(request):
             "query": user_message,
             "response_mode": "blocking",
             "conversation_id": conversation_id,
-            "user": "XpertAI_Devs",
+            "user": user.username,  # Use the logged-in user's username
             "files": []
         }
 
@@ -95,12 +98,10 @@ def chat_api(request):
             return JsonResponse(response_data, status=200)
 
         except requests.HTTPError as e:
-            # Log the error details for debugging
             logger.error(f"HTTPError: {e.response.status_code}, {e.response.text}")
             return JsonResponse({'error': 'API request failed: ' + e.response.text}, status=e.response.status_code)
 
         except requests.RequestException as e:
-            # Log the error for generic request issues
             logger.error(f"RequestException: {str(e)}")
             return JsonResponse({'error': 'Server Error: Unable to process the request.'}, status=500)
 
