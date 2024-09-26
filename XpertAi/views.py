@@ -2,17 +2,20 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-# chatbot/views.py
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout
-
-import requests
-import os
-from dotenv import load_dotenv
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+import requests
+import os
+import logging
+from dotenv import load_dotenv
+
 from XpertAi.forms import LoginForm, SignupForm
+
+# Logger setup for error tracking
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -67,11 +70,15 @@ def chat_api(request):
         user_message = request.POST.get('message')
         conversation_id = request.POST.get('conversation_id', '')
 
-        # Make the API request to the external service (e.g., Dify API)
+        # Validate user input
+        if not user_message:
+            return JsonResponse({'error': 'Message cannot be empty'}, status=400)
+
         headers = {
+            'Authorization': f'Bearer {API_KEY}',
             'Content-Type': 'application/json',
-            'Authorization': API_KEY,  # Your API key (keep this secret!)
         }
+
         data = {
             "inputs": {},
             "query": user_message,
@@ -86,5 +93,15 @@ def chat_api(request):
             response.raise_for_status()  # Raise an error for bad responses
             response_data = response.json()
             return JsonResponse(response_data, status=200)
+
+        except requests.HTTPError as e:
+            # Log the error details for debugging
+            logger.error(f"HTTPError: {e.response.status_code}, {e.response.text}")
+            return JsonResponse({'error': 'API request failed: ' + e.response.text}, status=e.response.status_code)
+
         except requests.RequestException as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            # Log the error for generic request issues
+            logger.error(f"RequestException: {str(e)}")
+            return JsonResponse({'error': 'Server Error: Unable to process the request.'}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
