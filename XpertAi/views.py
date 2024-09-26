@@ -12,6 +12,7 @@ import requests
 import os
 import logging
 from dotenv import load_dotenv
+import json
 
 from XpertAi.forms import LoginForm, SignupForm
 
@@ -106,3 +107,17 @@ def chat_api(request):
             return JsonResponse({'error': 'Server Error: Unable to process the request.'}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def feedback_api(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        feedback = data.get('feedback')
+
+        # Here you can handle the feedback (e.g., save it to the database, log it, etc.)
+        print(f'Received feedback: {feedback}')
+
+        # Respond with success
+        return JsonResponse({'status': 'success'}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)

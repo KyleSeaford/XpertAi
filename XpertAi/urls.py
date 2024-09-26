@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .import views
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('signup/', views.signup, name='Signup'),
     path('logout/', views.signout_view, name='Logout'),
     path('chat-api/', views.chat_api, name='chat_api'),
+    path('feedback-api/', views.feedback_api, name='feedback_api'),
 ]

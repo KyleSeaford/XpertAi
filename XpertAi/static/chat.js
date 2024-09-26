@@ -22,6 +22,9 @@ textarea.addEventListener('keydown', function(event) {
 });
 
 function handleFormSubmit() {
+    if (textarea.value.trim() === '') {
+        return;
+    }
     form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 }
 
@@ -146,5 +149,56 @@ function getCookie(name) {
 
 // Feedback handling function
 function handleFeedback(feedbackType) {
-    console.log(`Feedback clicked: ${feedbackType}`);
+    const messagesDiv = document.getElementById('messages');
+    
+    // Find the last user message element
+    const userMessages = Array.from(messagesDiv.children).filter(child => 
+        child.classList.contains('user-message')
+    );
+
+    if (userMessages.length === 0) {
+        console.error('No user messages found');
+        return;
+    }
+
+    // Get the last user message element
+    const lastUserMessageElement = userMessages[userMessages.length - 1];
+    
+    // Get the user message from the last user message element
+    const userMessageElement = lastUserMessageElement.querySelector('.message-text strong');
+    
+    if (!userMessageElement) {
+        console.error('No message text found in the last user message element');
+        return;
+    }
+
+    const userMessage = userMessageElement.textContent; // Get the user message
+
+    // Prepare the data to send to the server
+    const feedbackData = {
+        feedback: feedbackType,
+        userMessage: userMessage // You can send the user message along with the feedback
+    };
+
+    // Send the feedback to your backend API
+    fetch('/feedback-api/', {  // Adjust the endpoint as necessary
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'), // Include CSRF token if needed
+        },
+        body: JSON.stringify(feedbackData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        return data; // You can process the response data here if needed
+    })
+    .catch(error => {
+        console.error('Error submitting feedback:', error);
+    });
 }
