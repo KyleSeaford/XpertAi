@@ -1,5 +1,5 @@
 """
-WSGI config for learning project.
+WSGI config for XpertAi project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
