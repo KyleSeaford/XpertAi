@@ -38,11 +38,9 @@ ALLOWED_HOSTS = ['*']
 
 import os
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static") 
+STATIC_URL = "/staticfiles/" 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-
 # Application definition
 
 INSTALLED_APPS = [
