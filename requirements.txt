@@ -1,6 +1,4 @@
 Django==5.1.1
-django_environ==0.11.2
 python-dotenv==1.0.1
 Requests==2.32.3
-psycopg2
-psycopg2-binary
+django_environ==0.11.2
