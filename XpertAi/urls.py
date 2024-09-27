@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+
+from XpertAi import settings
 
 from . import views
 
@@ -28,3 +31,6 @@ urlpatterns = [
     path('chat-api/', views.chat_api, name='chat_api'),
     path('feedback-api/', views.feedback_api, name='feedback_api'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
