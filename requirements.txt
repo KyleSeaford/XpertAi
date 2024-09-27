@@ -3,3 +3,5 @@ django_environ==0.11.2
 environ==1.0
 python-dotenv==1.0.1
 Requests==2.32.3
+psycopg2
+psycopg2-binary
