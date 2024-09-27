@@ -15,9 +15,36 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+from pathlib import Path  
+import environ
+import os
+
+env = environ.Env(  
+    # set casting, default value  
+    DEBUG=(bool, False)  
+)  
+
+BASE_DIR = Path(__file__).resolve().parent.parent  
+# Take environment variables from .env file  
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  
+
+SECRET_KEY = env("SECRET_KEY", default="change_me")  
+
+DEBUG = env("DEBUG", default=False)  
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+
+
 load_dotenv()  # Load environment variables from the .env file
 
 API_KEY = os.getenv('API_KEY')
+
+LOGGING = {  
+    "version": 1,  
+    "disable_existing_loggers": False,  
+    "handlers": {"console": {"class": "logging.StreamHandler"}},  
+    "loggers": {"": {"handlers": ["console"], "level": "DEBUG"}},  
+}
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,12 +62,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 import os
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static") 
-STATIC_URL = "/staticfiles/" 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_URL = env.str("STATIC_URL", default="/static/")  
+STATIC_ROOT = env.str("STATIC_ROOT", default=BASE_DIR / "staticfiles")
+
+
+MEDIA_ROOT = env("MEDIA_ROOT", default=BASE_DIR / "media")  
+MEDIA_URL = env("MEDIA_PATH", default="/media/")
+
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = DEBUG
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,14 +89,16 @@ INSTALLED_APPS = [
     'XpertAi'
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+MIDDLEWARE = [  
+    "django.middleware.security.SecurityMiddleware",  
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",  
+    "django.contrib.sessions.middleware.SessionMiddleware",  
+    "django.middleware.common.CommonMiddleware",  
+    "django.middleware.csrf.CsrfViewMiddleware",  
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  
+    "django.contrib.messages.middleware.MessageMiddleware",  
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",  
 ]
 
 ROOT_URLCONF = 'XpertAi.urls'
@@ -88,10 +126,7 @@ WSGI_APPLICATION = 'XpertAi.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": env.db(default="sqlite:///db.sqlite3"),
 }
 
 # Password validation

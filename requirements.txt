@@ -1,3 +1,4 @@
-Django
+Django==5.1.1
+environ==1.0
 python-dotenv==1.0.1
 Requests==2.32.3
