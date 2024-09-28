@@ -54,6 +54,24 @@
         color: #2c3e50;
         text-decoration: none;
     }
+
+    .thanks {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #2c3e50;
+        color: white;
+        text-align: center;
+        padding-bottom: -10px;
+        padding-top: 10px;
+    }
+    .thanks a {
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
 </style>
 
 <div class="auth-container">
@@ -69,6 +87,10 @@
             Don't have an account? <a href="/signup">Sign Up</a>
         </div>
     </div>
+</div>
+
+<div class="thanks">
+    <p>Special thanks to <a href="https://github.com/matthewransley" target="_blank">Matthew</a> and <a href="https://github.com/b0ssbota" target="_blank">Harry</a> for helping</p>
 </div>
 
 {% endblock %}
