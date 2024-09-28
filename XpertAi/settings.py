@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 import os
-from site import venv
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from the .env file
@@ -49,16 +48,14 @@ INSTALLED_APPS = [
     'XpertAi'
 ]
 
-MIDDLEWARE = [  
-    "django.middleware.security.SecurityMiddleware",  
-    "whitenoise.middleware.WhiteNoiseMiddleware", 
-    "debug_toolbar.middleware.DebugToolbarMiddleware",  
-    "django.contrib.sessions.middleware.SessionMiddleware",  
-    "django.middleware.common.CommonMiddleware",  
-    "django.middleware.csrf.CsrfViewMiddleware",  
-    "django.contrib.auth.middleware.AuthenticationMiddleware",  
-    "django.contrib.messages.middleware.MessageMiddleware",  
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",  
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'XpertAi.urls'
@@ -81,21 +78,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'XpertAi.wsgi.application'
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-LOGGING = {  
-    "version": 1,  
-    "disable_existing_loggers": False,  
-    "handlers": {"console": {"class": "logging.StreamHandler"}},  
-    "loggers": {"": {"handlers": ["console"], "level": "DEBUG"}},  
-}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": venv.db(default="sqlite:///db.sqlite3"),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -132,15 +125,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_URL = venv.str("STATIC_URL", default="/static/")  
-STATIC_ROOT = venv.str("STATIC_ROOT", default=BASE_DIR / "staticfiles")
-
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_AUTOREFRESH = DEBUG
-
-MEDIA_ROOT = venv("MEDIA_ROOT", default=BASE_DIR / "media")  
-MEDIA_URL = venv("MEDIA_PATH", default="/media/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
