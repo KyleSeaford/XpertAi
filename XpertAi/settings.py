@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-v$3(z8m(65bhmvq-atptq0^o4k*lt70gs#s$ic$a&q1&-@3i%x
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # Allow all hosts for now
-CSRF_TRUSTED_ORIGINS = ['http://3.83.105.18', 'http://xpertai.insightxpert.co.uk', 'https://xpertai.insightxpert.co.uk']
+CSRF_TRUSTED_ORIGINS = ['http://xpertai.insightxpert.co.uk', 'https://xpertai.insightxpert.co.uk']
 
 
 # Application definition
