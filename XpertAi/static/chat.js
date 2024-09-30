@@ -99,7 +99,7 @@ function createNewResponseBubble(messagesDiv, text) {
     const uniqueId = `ai-response-text-${Date.now()}`;
     messageDiv.innerHTML = `
         <img src="/static/logoclear.png" alt="AI" class="ai-icon">
-        <div class="message-text"><strong>XpertAI:</strong> <span id="${uniqueId}"></span>`;
+        <div class="message-text"><strong>XpertAI:</strong> <md id="${uniqueId}"></md>`;
     messagesDiv.appendChild(messageDiv);
     messagesDiv.innerHTML += `
         <div class="feedback-buttons" style="margin-top: 0; display: flex; margin-left: 51px;">
@@ -115,10 +115,11 @@ function streamResponse(text, aiResponseTextElement, feedbackButtons) {
 
     function showNextCharacter() {
         if (index < text.length) {
-            aiResponseTextElement.textContent += text.charAt(index);
+            aiResponseTextElement.innerHTML += text.charAt(index);
             index++;
             setTimeout(showNextCharacter, 0.5);
         } else {
+	    renderMarkdown();
             const messagesDiv = document.getElementById('messages');
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             if(feedbackButtons != null) {
