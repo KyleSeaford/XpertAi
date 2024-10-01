@@ -113,11 +113,28 @@ def feedback_api(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         feedback = data.get('feedback')
+        user_message = data.get('userMessage')  # Get the user message
+        user = request.user  # Get the logged-in user
 
-        # Here you can handle the feedback (e.g., save it to the database, log it, etc.)
-        print(f'Received feedback: {feedback}')
+        # Prepare the data for Dify's API
+        dify_data = {
+            "rating": feedback,
+            "user": user.username,  # Use the logged-in user's username
+        }
 
-        # Respond with success
-        return JsonResponse({'status': 'success'}, status=200)
+        # Send the feedback to Dify's API
+        response = requests.post(
+            'https://api.dify.ai/v1/messages/:message_id/feedbacks',
+            headers={
+                'Authorization': f'Bearer {API_KEY}',  # Replace with your API key
+                'Content-Type': 'application/json'
+            },
+            data=json.dumps(dify_data)
+        )
+
+        if response.status_code == 200:
+            return JsonResponse({'status': 'success'}, status=200)
+        else:
+            return JsonResponse({'error': 'Failed to send feedback to Dify'}, status=response.status_code)
 
     return JsonResponse({'error': 'Invalid request method.'}, status=400)

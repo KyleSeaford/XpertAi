@@ -103,8 +103,8 @@ function createNewResponseBubble(messagesDiv, text) {
     messagesDiv.appendChild(messageDiv);
     messagesDiv.innerHTML += `
         <div class="feedback-buttons" style="margin-top: 0; display: flex; margin-left: 51px;">
-            <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('Good')" style="margin-right: 5px;">Good</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('Bad')">Bad</button>
+            <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('like')" style="margin-right: 5px;">Good</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('dislike')">Bad</button>
         </div>
         `;
     streamResponse(text, document.getElementById(uniqueId), messageDiv.querySelector('.feedback-buttons'));
@@ -152,7 +152,6 @@ function getCookie(name) {
 function handleFeedback(feedbackType) {
     const messagesDiv = document.getElementById('messages');
     
-    // Find the last user message element
     const userMessages = Array.from(messagesDiv.children).filter(child => 
         child.classList.contains('user-message')
     );
@@ -162,10 +161,7 @@ function handleFeedback(feedbackType) {
         return;
     }
 
-    // Get the last user message element
     const lastUserMessageElement = userMessages[userMessages.length - 1];
-    
-    // Get the user message from the last user message element
     const userMessageElement = lastUserMessageElement.querySelector('.message-text strong');
     
     if (!userMessageElement) {
@@ -173,20 +169,18 @@ function handleFeedback(feedbackType) {
         return;
     }
 
-    const userMessage = userMessageElement.textContent; // Get the user message
+    const userMessage = userMessageElement.textContent;
 
-    // Prepare the data to send to the server
     const feedbackData = {
         feedback: feedbackType,
-        userMessage: userMessage // You can send the user message along with the feedback
+        userMessage: userMessage
     };
 
-    // Send the feedback to your backend API
-    fetch('/feedback-api/', {  // Adjust the endpoint as necessary
+    fetch('/feedback-api/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'), // Include CSRF token if needed
+            'X-CSRFToken': getCookie('csrftoken'),
         },
         body: JSON.stringify(feedbackData),
     })
@@ -197,7 +191,7 @@ function handleFeedback(feedbackType) {
         return response.json();
     })
     .then(data => {
-        return data; // You can process the response data here if needed
+        console.log('Feedback submitted successfully:', data);
     })
     .catch(error => {
         console.error('Error submitting feedback:', error);
