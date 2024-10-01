@@ -81,7 +81,7 @@ form.addEventListener('submit', async function(event) {
         }
 
         loadingIcon.classList.add('hidden');
-        createNewResponseBubble(messagesDiv, answer);
+        createNewResponseBubble(messagesDiv, answer, message_id);
     } catch (error) {
         console.error('Error:', error);
         loadingIcon.classList.add('hidden');
