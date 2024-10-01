@@ -72,6 +72,7 @@ form.addEventListener('submit', async function(event) {
         }
 
         const jsonResponse = await response.json();
+        const message_id = jsonResponse.message_id;
         conversationId = jsonResponse.conversation_id;
         const answer = jsonResponse.answer;
 
@@ -93,7 +94,7 @@ form.addEventListener('submit', async function(event) {
 });
 
 
-function createNewResponseBubble(messagesDiv, text) {
+function createNewResponseBubble(messagesDiv, text, messageId) {
     let messageDiv = document.createElement('div');
     messageDiv.classList.add('message', 'ai-message');
     const uniqueId = `ai-response-text-${Date.now()}`;
@@ -103,8 +104,8 @@ function createNewResponseBubble(messagesDiv, text) {
     messagesDiv.appendChild(messageDiv);
     messagesDiv.innerHTML += `
         <div class="feedback-buttons" style="margin-top: 0; display: flex; margin-left: 51px;">
-            <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('like')" style="margin-right: 5px;">Good</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('dislike')">Bad</button>
+            <button class="btn btn-sm btn-outline-success" onclick="handleFeedback('like', '${messageId}')" style="margin-right: 5px;">Good</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="handleFeedback('dislike', '${messageId}')">Bad</button>
         </div>
         `;
     streamResponse(text, document.getElementById(uniqueId), messageDiv.querySelector('.feedback-buttons'));
@@ -149,7 +150,7 @@ function getCookie(name) {
 }
 
 // Feedback handling function
-function handleFeedback(feedbackType) {
+function handleFeedback(feedbackType, messageId) {
     const messagesDiv = document.getElementById('messages');
     
     const userMessages = Array.from(messagesDiv.children).filter(child => 
@@ -173,7 +174,8 @@ function handleFeedback(feedbackType) {
 
     const feedbackData = {
         feedback: feedbackType,
-        userMessage: userMessage
+        userMessage: userMessage,
+        messageId
     };
 
     fetch('/feedback-api/', {

@@ -29,7 +29,7 @@ urlpatterns = [
     path('signup', views.signup, name='Signup'),
     path('logout', views.signout_view, name='Logout'),
     path('chat-api/', views.chat_api, name='chat_api'),
-    path('feedback-api/', views.feedback_api, name='feedback_api'),
+    path('feedback_api/', views.feedback_api, name='feedback_api'),
 ]
 
 # add at the last

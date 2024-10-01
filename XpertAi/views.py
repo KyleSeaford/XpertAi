@@ -113,7 +113,7 @@ def feedback_api(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         feedback = data.get('feedback')
-        user_message = data.get('userMessage')  # Get the user message
+        message_id = data.get('messageId')  # Get the user message
         user = request.user  # Get the logged-in user
 
         # Prepare the data for Dify's API
@@ -124,7 +124,7 @@ def feedback_api(request):
 
         # Send the feedback to Dify's API
         response = requests.post(
-            'https://api.dify.ai/v1/messages/:message_id/feedbacks',
+            f'https://api.dify.ai/v1/messages/{message_id}/feedbacks',
             headers={
                 'Authorization': f'Bearer {API_KEY}',  # Replace with your API key
                 'Content-Type': 'application/json'
